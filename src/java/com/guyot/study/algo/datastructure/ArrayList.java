@@ -3,7 +3,10 @@ package com.guyot.study.algo.datastructure;
 /**
  * @author guyot
  * @version 1.0.0-SNAPSHOT
- * @desc 动态数组
+ * @desc ADT List implementation using dynamic array inside.
+ * Extention:
+ * 1.How does equals and hashcode methods work in Java?
+ * 2.Similar question on compare and compareTo methods?
  * @date 2020/12/17
  */
 public class ArrayList<E> {
@@ -19,49 +22,102 @@ public class ArrayList<E> {
         this.size = 0;
     }
 
+
+    public int size() {
+        return this.size;
+    }
+
+    public boolean isEmpty() {
+        return this.size <= 0;
+    }
+
+    public boolean contains(E e) {
+        for (int i = 0; i < size; i++) {
+            Object ele = data[i];
+            if (e == null && ele == null) {
+                return true;
+            } else {
+                if (e.equals(ele)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * @param i
-     * @param e
-     * exam: 1,2,3,4,5
+     * @param e exam: 1,2,3,4,5
      */
-    public void add(int i, E e) {
-        if (i > size) {
-            throw new IllegalArgumentException("下标越界");
+    public boolean add(int i, E e) {
+        if (i > size || i < 0) {
+            throw new IllegalArgumentException("下标不合法: " + i);
         }
         ensureCapacity();
-        for (int j = size - 1; j >= i; j++) {
+        for (int j = size - 1; j >= i; j--) {
             data[j + 1] = data[j];
         }
         data[i] = e;
         size++;
+        return true;
     }
 
 
-    public void add(E e) {
-        this.add(this.size, e);
+    public boolean add(E e) {
+        return this.add(this.size, e);
     }
 
-    public void remove(E e) {
-
+    public boolean remove(E e) {
+        if (e == null) {
+            for (int i = 0; i < size; i++) {
+                if (data[i] == null) {
+                    remove(i);
+                    return true;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (e.equals(data[i])) {
+                    remove(i);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    public void remove(int i) {
-
+    public boolean remove(int i) {
+        checkIndex(i);
+        for (int j = i; j < size; j++) {
+            data[j] = data[j + 1];
+        }
+        size--;
+        return true;
     }
 
     public E get(int i) {
-        return null;
+        checkIndex(i);
+        return (E) data[i];
     }
 
-    public void set(int i, E e) {
 
+    public boolean set(int i, E e) {
+        checkIndex(i);
+        data[i] = e;
+        return true;
     }
 
+
+    private void checkIndex(int i) {
+        if (i >= size || i < 0) {
+            throw new IllegalArgumentException("下标不合法: " + i);
+        }
+    }
 
     private void ensureCapacity() {
         if (size >= capacity) {
             final int newCap = this.capacity * 2;
-            java.lang.Object[] array = new Object[newCap];
+            Object[] array = new Object[newCap];
             for (int i = 0; i < size; i++) {
                 array[i] = this.data[i];
             }
@@ -69,25 +125,5 @@ public class ArrayList<E> {
             this.capacity = newCap;
         }
     }
-
-    public static <E> void main(String[] args) {
-        ArrayList<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
-        list.add(5);
-        list.add(6);
-        list.add(7);
-        list.add(8);
-        list.add(9);
-        list.add(10);
-        list.add(11);
-
-        for (int i = 0; i < list.size; i++) {
-            System.out.println(list.data[i]);
-        }
-    }
-
 }
 
