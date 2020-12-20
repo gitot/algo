@@ -1,6 +1,5 @@
 package com.guyot.study.algo.leetcode.editor.cn.tree;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -95,5 +94,32 @@ public class Solution {
         helper(root.left, res);
         helper(root.right, res);
         res.add(root.val);
+    }
+
+
+    public TreeNode mirrorTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode tmp = root.left;
+        root.left = root.right;
+        root.right = tmp;
+        mirrorTree(root.left);
+        mirrorTree(root.right);
+        return root;
+    }
+
+    public boolean isSymmetric(TreeNode root) {
+        return root == null ? true : recursive(root.left, root.right);
+    }
+
+    private boolean recursive(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null || left.val != right.val) {
+            return false;
+        }
+        return recursive(left.left, right.right) && recursive(left.right, right.left);
     }
 }
