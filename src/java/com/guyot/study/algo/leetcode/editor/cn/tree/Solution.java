@@ -1,8 +1,6 @@
 package com.guyot.study.algo.leetcode.editor.cn.tree;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author guyot
@@ -47,7 +45,6 @@ public class Solution {
     }
 
 
-
     public List<Integer> postorderTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
@@ -77,7 +74,7 @@ public class Solution {
     }
 
 
-    public boolean isValidBST(TreeNode root,Integer low,Integer high) {
+    public boolean isValidBST(TreeNode root, Integer low, Integer high) {
         if (root == null) {
             return true;
         }
@@ -127,7 +124,7 @@ public class Solution {
         if (root == null) {
             return true;
         }
-        if (root.left != null && root.val != root.left.val){
+        if (root.left != null && root.val != root.left.val) {
             return false;
         }
         if (root.right != null && root.val != root.right.val) {
@@ -135,4 +132,111 @@ public class Solution {
         }
         return isUnivalTree(root.left) && isUnivalTree(root.right);
     }
+
+    public List<TreeNode> generateTrees(int n) {
+        if (n <= 0) {
+            return new LinkedList<>();
+        }
+        return generateTree(1, n);
+    }
+
+    private List<TreeNode> generateTree(int start, int end) {
+        List<TreeNode> list = new LinkedList<>();
+        if (start > end) {
+            list.add(null);
+            return list;
+        }
+
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> left = generateTree(start, i - 1);
+            List<TreeNode> right = generateTree(i + 1, end);
+
+            for (TreeNode leftTree : left) {
+                for (TreeNode rightTree : right) {
+                    TreeNode cur = new TreeNode(i);
+                    cur.left = leftTree;
+                    cur.right = rightTree;
+                    list.add(cur);
+                }
+            }
+
+        }
+        return list;
+    }
+
+    public int maxDepth(TreeNode root) {
+        if (root == null) return 0;
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+    }
+
+
+    public int[] levelOrder(TreeNode root) {
+        if (root == null) return new int[0];
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        List<Integer> list = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            list.add(node.val);
+            if (node.left != null) queue.offer(node.left);
+            if (node.right != null) queue.offer(node.right);
+        }
+        int[] res = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            res[i] = list.get(i);
+        }
+        return res;
+    }
+
+    public List<List<Integer>> levelOrder2(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        while (!q.isEmpty()) {
+            List<Integer> tmp = new ArrayList<>();
+            for (int i = q.size(); i > 0; i--) {
+                TreeNode treeNode = q.poll();
+                tmp.add(treeNode.val);
+                if (treeNode.left != null) q.offer(treeNode.left);
+                if (treeNode.right != null) q.offer(treeNode.right);
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    public List<List<Integer>> levelOrder3(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        while (!q.isEmpty()) {
+            LinkedList<Integer> tmp = new LinkedList<>();
+            for (int i = q.size(); i > 0; i--) {
+                TreeNode treeNode = q.poll();
+                if (res.size() % 2 == 0) {
+                    tmp.offerLast(treeNode.val);
+                } else {
+                    tmp.offerFirst(treeNode.val);
+                }
+                if (treeNode.left != null) q.offer(treeNode.left);
+                if (treeNode.right != null) q.offer(treeNode.right);
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        return (A != null && B != null) && (recur(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B));
+    }
+
+    private boolean recur(TreeNode a, TreeNode b) {
+        if (b == null) return true;
+        if (a == null || a.val != b.val) return false;
+        return recur(a.left, b.left) && recur(a.right, b.right);
+    }
+
+
 }
