@@ -238,5 +238,106 @@ public class Solution {
         return recur(a.left, b.left) && recur(a.right, b.right);
     }
 
+    public void flatten(TreeNode root) {
+        if (root == null) return;
+
+        flatten(root.left);
+        flatten(root.right);
+
+
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+
+        root.left = null;
+        root.right = left;
+
+        TreeNode p = root;
+        while (p.right != null) {
+            p = p.right;
+        }
+        p.right = right;
+    }
+
+
+    public TreeNode constructMaximumBinaryTree(int[] nums) {
+        if (nums == null) return null;
+        TreeNode root = build(nums, 0, nums.length - 1);
+        return root;
+    }
+
+    private TreeNode build(int[] nums, int low, int high) {
+        if (low > high) return null;
+
+        int max = Integer.MIN_VALUE;
+        int index = Integer.MIN_VALUE;
+        for (int i = low; i <= high; i++) {
+            if (nums[i] > max) {
+                index = i;
+                max = nums[i];
+            }
+        }
+
+        TreeNode root = new TreeNode(max);
+        root.left = build(nums, low, index - 1);
+        root.right = build(nums, index + 1, high);
+        return root;
+    }
+
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        return build(preorder, 0, preorder.length - 1,
+                inorder, 0, inorder.length - 1);
+    }
+
+    private TreeNode build(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart, int inEnd) {
+        if (preStart > preEnd) return null;
+
+        int rootVal = preorder[preStart];
+
+        int index = 0;
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == rootVal) {
+                index = i;
+                break;
+            }
+        }
+
+        TreeNode root = new TreeNode(rootVal);
+        int leftSize = index - inStart;
+        root.left = build(preorder, preStart + 1, preStart + leftSize, inorder, inStart, index - 1);
+        root.right = build(preorder, preStart + leftSize + 1, preEnd, inorder, index + 1, inEnd);
+        return root;
+    }
+
+
+    public TreeNode buildTree2(int[] inorder, int[] postorder) {
+        return build2(inorder, 0, inorder.length - 1,
+                postorder, 0, postorder.length - 1);
+    }
+
+    private TreeNode build2(int[] inorder, int inStart, int inEnd,
+                            int[] postorder, int postStart, int postEnd) {
+        if (postStart > postEnd) return null;
+
+        int rootVal = postorder[postEnd];
+
+        int index = 0;
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == rootVal) {
+                index = i;
+                break;
+            }
+        }
+
+
+        TreeNode root = new TreeNode(rootVal);
+        int leftSize = index - inStart;
+        root.left = build(inorder, inStart, index - 1,
+                postorder, postStart, postStart + leftSize - 1);
+        root.right = build(inorder, index + 1, inEnd, postorder,
+                postStart + leftSize, postEnd - 1);
+        return root;
+    }
+
 
 }
